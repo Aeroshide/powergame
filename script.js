@@ -127,16 +127,16 @@ function checkAnswer() {
 
 function handleCheckpoint(power) {
     const messages = {
-        10: ", Your first checkpoint!, ",
-        15: ", Second Checkpoint!, ",
-        18: ", You've Surpassed The creator of this game, Keep going!!.",
-        22: "Third checkpoint!, ",
-        25: "Fourth checkpoint!, ",
-        29: "How are you holding up?, ",
+        10: "",
+        15: "",
+        18: "",
+        22: "",
+        25: "",
+        29: "",
         31: "The end?, ",
-        32: ", Hey, you're at the 32-bit Integer limit, You're doing calculations beyond what many 2002-era systems could handle natively. Amazing!",
-        64: ", 64-bit integer limit!, Nah, you wouldn't get here right?... right??, im not even surprised on how you got here, im surprised that the JS Engine hasn't overflowed.",
-        128: ", You've reached so high, here's my password: kingkalingkung123 (ha.. you tried??)"
+        32: " Hey, you're at the 32-bit Integer limit, You're doing calculations beyond what many 2002-era systems could handle natively. Amazing!",
+        64: " 64-bit integer limit!, Nah, you wouldn't get here right?... right??, im not even surprised on how you got here, im surprised that the JS Engine hasn't overflowed.",
+        128: " You've reached so high, here's my password: kingkalingkung123 (ha.. you tried??)"
     };
 
     const FUNSTRINGS = [
@@ -165,7 +165,7 @@ function handleCheckpoint(power) {
     ];
 
 
-    const funMessageCheckpoints = [10, 15, 22, 25, 29, 31];
+    const funMessageCheckpoints = [10, 15, 22, 25, 29];
 
 
     if (funMessageCheckpoints.includes(power)) {
