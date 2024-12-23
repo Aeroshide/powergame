@@ -135,6 +135,14 @@ function handleCheckpoint(power) {
         29: "",
         31: "The end?, ",
         32: " Hey, you're at the 32-bit Integer limit, You're doing calculations beyond what many 2002-era systems could handle natively. Amazing!",
+        35: "",
+        38: "",
+        42: "",
+        45: "",
+        49: "",
+        51: "",
+        55: "",
+        60: "",
         64: " 64-bit integer limit!, Nah, you wouldn't get here right?... right??, im not even surprised on how you got here, im surprised that the JS Engine hasn't overflowed.",
         128: " You've reached so high, here's my password: kingkalingkung123 (ha.. you tried??)"
     };
@@ -165,7 +173,7 @@ function handleCheckpoint(power) {
     ];
 
 
-    const funMessageCheckpoints = [10, 15, 22, 25, 29];
+    const funMessageCheckpoints = [10, 15, 22, 25, 29, 35,38,42,45,49,51,55,60];
 
 
     if (funMessageCheckpoints.includes(power)) {
