@@ -166,7 +166,7 @@ function checkAnswer() {
             zenFeedback = feedbackText;
             setCookie('zenScore', zenScore, 365);
             setCookie('zenPower', zenPower, 365);
-            setCookie('zenFeedback', zenFeedback, 365);
+            setCookie('zenFeedback', encodeURIComponent(zenFeedback), 365);
         } else {
             score++;
             currentPower++;
@@ -174,7 +174,7 @@ function checkAnswer() {
             setHighScore(score);
             setCookie('currentScore', score, 365);
             setCookie('currentPower', currentPower, 365);
-            setCookie('normalFeedback', normalFeedback, 365);
+            setCookie('normalFeedback', encodeURIComponent(normalFeedback), 365);
         }
         
         handleCheckpoint(power);
@@ -293,7 +293,6 @@ function resetGame() {
     } else {
         score = 0;
         currentPower = 0;
-        normalFeedback = '';
         setCookie('currentScore', score, 365);
         setCookie('currentPower', currentPower, 365);
         setCookie('normalFeedback', '', 365);
