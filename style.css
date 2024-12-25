@@ -122,6 +122,11 @@ button:hover {
     }
 }
 
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
 .icon-button {
     background: none;
     border: none;

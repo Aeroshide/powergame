@@ -1,6 +1,41 @@
 let currentPower = 0;
+let zenPower = 0;
 let score = 0;
+let zenScore = 0;
+let isZenMode = false;
+let normalFeedback = '';
+let zenFeedback = '';
 
+// Cookie functions
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(?:^|;)\\s*${name}=([^;]*)`));
+    return match ? match[1] : null;
+}
+
+function setCookie(name, value, days) {
+    const expires = days ? `; expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
+    document.cookie = `${name}=${value}${expires}; path=/`;
+}
+
+// Initialize mode and scores
+function initialize() {
+    isZenMode = getCookie('isZenMode') === 'true';
+    
+    currentPower = parseInt(getCookie('currentPower') || '0', 10);
+    score = parseInt(getCookie('currentScore') || '0', 10);
+    normalFeedback = getCookie('normalFeedback') || '';
+    
+    zenScore = parseInt(getCookie('zenScore') || '0', 10);
+    zenPower = parseInt(getCookie('zenPower') || '0', 10);
+    zenFeedback = getCookie('zenFeedback') || '';
+
+    updateScoreBoard();
+    updatePowerDisplay();
+    updateFeedback();
+}
+
+
+// DOM elements
 const powerDisplay = document.getElementById("currentPower");
 const answerInput = document.getElementById("answerInput");
 const feedback = document.getElementById("feedback");
@@ -9,28 +44,42 @@ const highScoreBoard = document.getElementById("highScoreBoard");
 const restartButton = document.getElementById("restartButton");
 const infoButton = document.getElementById("infoButton");
 const infoModal = document.getElementById("infoModal");
+const zenModeButton = document.getElementById("zenModeButton");
 
-function getHighScore() {
-    const match = document.cookie.match(/highScore=(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
+
+function updateFeedback() {
+    feedback.textContent = isZenMode ? zenFeedback : normalFeedback;
+    feedback.style.color = feedback.textContent.includes('Correct') ? 'green' : 
+                          feedback.textContent.includes('Wrong') ? 'red' : 
+                          feedback.textContent.includes('Hey') ? 'purple' : 'black';
 }
 
-function setHighScore(score) {
-    document.cookie = `highScore=${score}; path=/; max-age=${60 * 60 * 24 * 365}`;
+
+function getHighScore() {
+    return parseInt(getCookie('highScore') || '0', 10);
+}
+
+function setHighScore(newScore) {
+    const currentHighScore = getHighScore();
+    if (newScore > currentHighScore) {
+        setCookie('highScore', newScore, 365);
+    }
 }
 
 function updatePowerDisplay() {
-    powerDisplay.innerHTML = `2<sup>${currentPower}</sup>`;
+    const displayPower = isZenMode ? zenPower : currentPower;
+    powerDisplay.innerHTML = `2<sup>${displayPower}</sup>`;
 }
 
 function updateScoreBoard() {
-    scoreBoard.textContent = `Score: ${score}`;
-    const highScore = getHighScore();
-    if (score > highScore) {
-        setHighScore(score);
-        highScoreBoard.textContent = `High Score: ${score}`;
+    if (isZenMode) {
+        scoreBoard.textContent = `Zen Score: ${zenScore}`;
+        highScoreBoard.style.display = "none";
     } else {
+        scoreBoard.textContent = `Score: ${score}`;
+        const highScore = getHighScore();
         highScoreBoard.textContent = `High Score: ${highScore}`;
+        highScoreBoard.style.display = "block";
     }
 }
 
@@ -99,50 +148,58 @@ function spawnConfetti() {
 }
 
 function checkAnswer() {
-    const correctAnswer = Math.pow(2, currentPower);
+    const power = isZenMode ? zenPower : currentPower;
+    const correctAnswer = Math.pow(2, power);
     const userAnswer = parseInt(answerInput.value, 10);
 
     if (userAnswer === correctAnswer) {
-        feedback.textContent = `Correct! The answer was ${userAnswer}`;
-        feedback.style.color = "green";
-        score++;
-        currentPower++;
-        spawnConfetti();
-        handleCheckpoint(currentPower);
-    } else if (currentPower === 0 && userAnswer != correctAnswer) {
-        feedback.innerHTML = `Wrong! The correct answer was ${correctAnswer}. (You put in ${userAnswer}). <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
-        feedback.style.color = "red";
-        resetGame();
+        const feedbackText = `Correct! The answer was ${userAnswer}`;
+        
+        if (isZenMode) {
+            zenScore++;
+            zenPower++;
+            zenFeedback = feedbackText;
+            setCookie('zenScore', zenScore, 365);
+            setCookie('zenPower', zenPower, 365);
+            setCookie('zenFeedback', zenFeedback, 365);
+        } else {
+            score++;
+            currentPower++;
+            normalFeedback = feedbackText;
+            setHighScore(score);
+            setCookie('currentScore', score, 365);
+            setCookie('currentPower', currentPower, 365);
+            setCookie('normalFeedback', normalFeedback, 365);
+        }
+        
+        handleCheckpoint(power);
     } else {
-        feedback.textContent = `Wrong! The correct answer was ${correctAnswer}. (You put in ${userAnswer})`;
-        feedback.style.color = "red";
-        resetGame();
+        const feedbackText = `Wrong! The correct answer was ${correctAnswer}. (You put in ${userAnswer})`;
+        
+        if (isZenMode) {
+            zenFeedback = feedbackText;
+            setCookie('zenFeedback', zenFeedback, 365);
+        } else {
+            setHighScore(score);
+            normalFeedback = feedbackText;
+            setCookie('normalFeedback', normalFeedback, 365);
+            resetGame();
+        }
     }
 
     updatePowerDisplay();
     updateScoreBoard();
+    updateFeedback();
     answerInput.value = "";
     answerInput.focus();
 }
 
+
+
 function handleCheckpoint(power) {
     const messages = {
-        10: "",
-        15: "",
-        18: "",
-        22: "",
-        25: "",
-        29: "",
-        31: "The end?, ",
+        31: "The end?",
         32: " Hey, you're at the 32-bit Integer limit, You're doing calculations beyond what many 2002-era systems could handle natively. Amazing!",
-        35: "",
-        38: "",
-        42: "",
-        45: "",
-        49: "",
-        51: "",
-        55: "",
-        60: "",
         64: " 64-bit integer limit!, Nah, you wouldn't get here right?... right??, im not even surprised on how you got here, im surprised that the JS Engine hasn't overflowed.",
         128: " You've reached so high, here's my password: kingkalingkung123 (ha.. you tried??)"
     };
@@ -173,7 +230,7 @@ function handleCheckpoint(power) {
     ];
 
 
-    const funMessageCheckpoints = [10, 15, 22, 25, 29, 35,38,42,45,49,51,55,60];
+    const funMessageCheckpoints = [];
 
 
     if (funMessageCheckpoints.includes(power)) {
@@ -190,33 +247,81 @@ function handleCheckpoint(power) {
 }
 
 
-function resetGame() {
-    score = 0;
-    currentPower = 0;
+function toggleZenMode() {
+    isZenMode = !isZenMode;
+    setCookie('isZenMode', isZenMode.toString(), 365);
+    
+    updateScoreBoard();
+    updatePowerDisplay();
+    updateFeedback();
+    
+    if (isZenMode) {
+        showSplash("Zen mode activated", "green");
+    } else {
+        showSplash("Zen mode disabled", "red");
+    }
 }
 
+function resetGame() {
+    if (isZenMode) {
+        zenScore = 0;
+        zenPower = 0;
+        zenFeedback = '';
+        setCookie('zenScore', zenScore, 365);
+        setCookie('zenPower', zenPower, 365);
+        setCookie('zenFeedback', '', 365);
+    } else {
+        score = 0;
+        currentPower = 0;
+        normalFeedback = '';
+        setCookie('currentScore', score, 365);
+        setCookie('currentPower', currentPower, 365);
+        setCookie('normalFeedback', '', 365);
+    }
+    updateScoreBoard();
+    updatePowerDisplay();
+    updateFeedback();
+    answerInput.value = "";
+    answerInput.focus();
+}
+
+
+
+function showSplash(message, color) {
+    const splash = document.createElement("div");
+    splash.style.position = "fixed";
+    splash.style.top = "50%";
+    splash.style.left = "50%";
+    splash.style.transform = "translate(-50%, -50%)";
+    splash.style.backgroundColor = color;
+    splash.style.color = "white";
+    splash.style.padding = "10px 20px";
+    splash.style.borderRadius = "5px";
+    splash.style.fontFamily = "Arial, sans-serif";
+    splash.style.fontWeight = "bold";
+    splash.style.animation = "fadeOut 2s forwards";
+    splash.textContent = message;
+    document.body.appendChild(splash);
+
+    setTimeout(() => {
+        splash.remove();
+    }, 2000);
+}
 
 function toggleInfoModal() {
     infoModal.style.display = infoModal.style.display === "block" ? "none" : "block";
 }
 
-document.getElementById("submitAnswer").addEventListener("click", checkAnswer);
 
+// Event listeners
+zenModeButton.addEventListener("click", toggleZenMode);
+document.getElementById("submitAnswer").addEventListener("click", checkAnswer);
 answerInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         checkAnswer();
     }
 });
-
-restartButton.addEventListener("click", () => {
-    score = 0;
-    currentPower = 0;
-    feedback.textContent = "";
-    updatePowerDisplay();
-    updateScoreBoard();
-    answerInput.value = "";
-    answerInput.focus();
-});
+restartButton.addEventListener("click", resetGame);
 
 infoButton.addEventListener("click", toggleInfoModal);
 
