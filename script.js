@@ -190,11 +190,13 @@ function checkAnswer() {
         
         handleCheckpoint(power);
     } else {
-        if (correctAnswer === 1)
+
+        const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()}) <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
+        if (correctAnswer != 1)
         {
-            const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()}) <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
+            feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;  
         }
-        const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;
+        
         
         if (isZenMode) {
             zenMisses++;
@@ -205,13 +207,18 @@ function checkAnswer() {
             setHighScore(score);
             normalFeedback = feedbackText;
             setCookie('normalFeedback', normalFeedback, 365);
-            resetGame();
+            
         }
     }
 
     updatePowerDisplay();
     updateScoreBoard();
     updateFeedback();
+
+    if (!isZenMode)
+    {
+        resetGame();
+    }
     answerInput.value = "";
     answerInput.focus();
 }
