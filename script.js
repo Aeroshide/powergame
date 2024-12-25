@@ -28,12 +28,12 @@ function initialize() {
     
     currentPower = parseInt(getCookie('currentPower') || '0', 10);
     score = parseInt(getCookie('currentScore') || '0', 10);
-    normalFeedback = decodeURIComponent(getCookie('normalFeedback') || '');
+    normalFeedback = getCookie('normalFeedback');
     
     zenScore = parseInt(getCookie('zenScore') || '0', 10);
     zenPower = parseInt(getCookie('zenPower') || '0', 10);
     zenMisses = parseInt(getCookie('zenMisses') || '0', 10);
-    zenFeedback = decodeURIComponent(getCookie('zenFeedback') || '');
+    zenFeedback = getCookie('zenFeedback') || '';
 
     updateScoreBoard();
     updatePowerDisplay();
@@ -168,7 +168,7 @@ function checkAnswer() {
             zenFeedback = feedbackText;
             setCookie('zenScore', zenScore, 365);
             setCookie('zenPower', zenPower, 365);
-            setCookie('zenFeedback', encodeURIComponent(zenFeedback), 365);
+            setCookie('zenFeedback',zenFeedback, 365);
         } else {
             score++;
             currentPower++;
@@ -176,7 +176,7 @@ function checkAnswer() {
             setHighScore(score);
             setCookie('currentScore', score, 365);
             setCookie('currentPower', currentPower, 365);
-            setCookie('normalFeedback', encodeURIComponent(normalFeedback), 365);
+            setCookie('normalFeedback', normalFeedback, 365);
         }
         
         handleCheckpoint(power);
