@@ -18,7 +18,7 @@ function getCookie(name) {
 
 function setCookie(name, value, days) {
     const expires = days ? `; expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
-    document.cookie = `${name}=${value}${expires}; path=/`;
+    document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/`;
 }
 
 
@@ -35,13 +35,13 @@ function initialize() {
     zenMisses = parseInt(getCookie('zenMisses') || '0', 10);
     zenFeedback = getCookie('zenFeedback') || '';
 
-    console.log(currentPower)
-    console.log(score)
-    console.log(normalFeedback)
-    console.log(zenScore)
-    console.log(zenPower)
-    console.log(zenMisses)
-    console.log(zenFeedback)
+    console.log('isZenMode:', getCookie('isZenMode'));
+    console.log('currentPower:', getCookie('currentPower'));
+    console.log('currentScore:', getCookie('currentScore'));
+    console.log('zenScore:', getCookie('zenScore'));
+    console.log('zenPower:', getCookie('zenPower'));
+    console.log('zenMisses:', getCookie('zenMisses'));
+    
 
 
     updateScoreBoard();
@@ -190,6 +190,10 @@ function checkAnswer() {
         
         handleCheckpoint(power);
     } else {
+        if (correctAnswer === 1)
+        {
+            const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()}) <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
+        }
         const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;
         
         if (isZenMode) {
