@@ -2,9 +2,11 @@ let currentPower = 0;
 let zenPower = 0;
 let score = 0;
 let zenScore = 0;
+let zenMisses = 0;
 let isZenMode = false;
 let normalFeedback = '';
 let zenFeedback = '';
+
 
 // Cookie functions
 function getCookie(name) {
@@ -30,6 +32,7 @@ function initialize() {
     
     zenScore = parseInt(getCookie('zenScore') || '0', 10);
     zenPower = parseInt(getCookie('zenPower') || '0', 10);
+    zenMisses = parseInt(getCookie('zenMisses') || '0', 10);
     zenFeedback = getCookie('zenFeedback') || '';
 
     updateScoreBoard();
@@ -76,7 +79,7 @@ function updatePowerDisplay() {
 
 function updateScoreBoard() {
     if (isZenMode) {
-        scoreBoard.textContent = `Zen Score: ${zenScore}`;
+        scoreBoard.textContent = `Zen Score: ${zenScore} | Misses: ${zenMisses}`;
         highScoreBoard.style.display = "none";
     } else {
         scoreBoard.textContent = `Score: ${score}`;
@@ -85,6 +88,7 @@ function updateScoreBoard() {
         highScoreBoard.style.display = "block";
     }
 }
+
 
 function spawnConfetti() {
     const confettiContainer = document.getElementById("confettiContainer");
@@ -180,8 +184,10 @@ function checkAnswer() {
         const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;
         
         if (isZenMode) {
+            zenMisses++;
             zenFeedback = feedbackText;
             setCookie('zenFeedback', zenFeedback, 365);
+            setCookie('zenMisses', zenMisses, 365);
         } else {
             setHighScore(score);
             normalFeedback = feedbackText;
@@ -269,9 +275,11 @@ function resetGame() {
     if (isZenMode) {
         zenScore = 0;
         zenPower = 0;
+        zenMisses = 0;
         zenFeedback = '';
         setCookie('zenScore', zenScore, 365);
         setCookie('zenPower', zenPower, 365);
+        setCookie('zenMisses', zenMisses, 365);
         setCookie('zenFeedback', '', 365);
     } else {
         score = 0;
