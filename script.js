@@ -54,11 +54,22 @@ const zenModeButton = document.getElementById("zenModeButton");
 
 
 function updateFeedback() {
-    feedback.textContent = isZenMode ? zenFeedback : normalFeedback;
-    feedback.style.color = feedback.textContent.includes('Correct') ? 'green' : 
-                          feedback.textContent.includes('Wrong') ? 'red' : 
-                          feedback.textContent.includes('Hey') ? 'purple' : 'black';
+    const feedbackElement = document.getElementById('feedback');
+    
+    // Use innerHTML to preserve the HTML content (links, etc.)
+    const feedbackContent = isZenMode ? zenFeedback : normalFeedback;
+    feedbackElement.innerHTML = feedbackContent;
+
+    // Color the feedback text based on its content
+    if (feedbackContent.includes('Correct')) {
+        feedbackElement.style.color = 'green';
+    } else if (feedbackContent.includes('Wrong')) {
+        feedbackElement.style.color = 'red';
+    } else {
+        feedbackElement.style.color = 'pink';
+    }
 }
+
 
 
 function getHighScore() {
@@ -159,16 +170,18 @@ function checkAnswer() {
     const correctAnswer = 2n ** BigInt(power);
     const userAnswer = BigInt(answerInput.value);
 
+    let feedbackText = '';
+
     if (userAnswer === correctAnswer) {
-        const feedbackText = `Correct! The answer was ${userAnswer.toString()}`;
-        
+        feedbackText = `Correct! The answer was ${userAnswer.toString()}`;
+
         if (isZenMode) {
             zenScore++;
             zenPower++;
             zenFeedback = feedbackText;
             setCookie('zenScore', zenScore, 365);
             setCookie('zenPower', zenPower, 365);
-            setCookie('zenFeedback',zenFeedback, 365);
+            setCookie('zenFeedback', zenFeedback, 365);
         } else {
             score++;
             currentPower++;
@@ -178,17 +191,16 @@ function checkAnswer() {
             setCookie('currentPower', currentPower, 365);
             setCookie('normalFeedback', normalFeedback, 365);
         }
-        
+
         handleCheckpoint(power);
     } else {
-
-        const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()}) <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
-        if (correctAnswer != 1)
-        {
-            feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;  
+        if (correctAnswer === 1n) {
+            feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()}) 
+                <a href="https://www.youtube.com/shorts/W-JoMPOe9HQ" target="_blank">Wanna know why?</a>`;
+        } else {
+            feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;
         }
-        
-        
+
         if (isZenMode) {
             zenMisses++;
             zenFeedback = feedbackText;
@@ -198,18 +210,16 @@ function checkAnswer() {
             setHighScore(score);
             normalFeedback = feedbackText;
             setCookie('normalFeedback', normalFeedback, 365);
-            
+            resetGame();
         }
     }
+
+    document.getElementById('feedback').innerHTML = feedbackText;
 
     updatePowerDisplay();
     updateScoreBoard();
     updateFeedback();
 
-    if (!isZenMode)
-    {
-        resetGame();
-    }
     answerInput.value = "";
     answerInput.focus();
 }
