@@ -35,6 +35,15 @@ function initialize() {
     zenMisses = parseInt(getCookie('zenMisses') || '0', 10);
     zenFeedback = getCookie('zenFeedback') || '';
 
+    console.log(currentPower)
+    console.log(score)
+    console.log(normalFeedback)
+    console.log(zenScore)
+    console.log(zenPower)
+    console.log(zenMisses)
+    console.log(zenFeedback)
+
+
     updateScoreBoard();
     updatePowerDisplay();
     updateFeedback();
