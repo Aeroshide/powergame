@@ -351,4 +351,5 @@ infoButton.addEventListener("click", toggleInfoModal);
 
 updatePowerDisplay();
 updateScoreBoard();
+initialize()
 infoModal.style.display = "block";
