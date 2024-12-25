@@ -8,7 +8,6 @@ let normalFeedback = '';
 let zenFeedback = '';
 
 
-// Cookie functions
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -22,27 +21,17 @@ function setCookie(name, value, days) {
 }
 
 
-// Initialize mode and scores
 function initialize() {
     isZenMode = getCookie('isZenMode') === 'true';
     
     currentPower = parseInt(getCookie('currentPower') || '0', 10);
     score = parseInt(getCookie('currentScore') || '0', 10);
-    normalFeedback = getCookie('normalFeedback') || '';
+    normalFeedback = decodeURIComponent(getCookie('normalFeedback') || '');
     
     zenScore = parseInt(getCookie('zenScore') || '0', 10);
     zenPower = parseInt(getCookie('zenPower') || '0', 10);
     zenMisses = parseInt(getCookie('zenMisses') || '0', 10);
-    zenFeedback = getCookie('zenFeedback') || '';
-
-    console.log('isZenMode:', getCookie('isZenMode'));
-    console.log('currentPower:', getCookie('currentPower'));
-    console.log('currentScore:', getCookie('currentScore'));
-    console.log('zenScore:', getCookie('zenScore'));
-    console.log('zenPower:', getCookie('zenPower'));
-    console.log('zenMisses:', getCookie('zenMisses'));
-    
-
+    zenFeedback = decodeURIComponent(getCookie('zenFeedback') || '');
 
     updateScoreBoard();
     updatePowerDisplay();
@@ -50,7 +39,7 @@ function initialize() {
 }
 
 
-// DOM elements
+
 const powerDisplay = document.getElementById("currentPower");
 const answerInput = document.getElementById("answerInput");
 const feedback = document.getElementById("feedback");
@@ -344,7 +333,6 @@ function toggleInfoModal() {
 }
 
 
-// Event listeners
 zenModeButton.addEventListener("click", toggleZenMode);
 document.getElementById("submitAnswer").addEventListener("click", checkAnswer);
 answerInput.addEventListener("keydown", (event) => {
