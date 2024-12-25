@@ -152,11 +152,11 @@ function spawnConfetti() {
 
 function checkAnswer() {
     const power = isZenMode ? zenPower : currentPower;
-    const correctAnswer = Math.pow(2, power);
-    const userAnswer = parseInt(answerInput.value, 10);
+    const correctAnswer = 2n ** BigInt(power);
+    const userAnswer = BigInt(answerInput.value);
 
     if (userAnswer === correctAnswer) {
-        const feedbackText = `Correct! The answer was ${userAnswer}`;
+        const feedbackText = `Correct! The answer was ${userAnswer.toString()}`;
         
         if (isZenMode) {
             zenScore++;
@@ -177,7 +177,7 @@ function checkAnswer() {
         
         handleCheckpoint(power);
     } else {
-        const feedbackText = `Wrong! The correct answer was ${correctAnswer}. (You put in ${userAnswer})`;
+        const feedbackText = `Wrong! The correct answer was ${correctAnswer.toString()}. (You put in ${userAnswer.toString()})`;
         
         if (isZenMode) {
             zenFeedback = feedbackText;
@@ -196,6 +196,7 @@ function checkAnswer() {
     answerInput.value = "";
     answerInput.focus();
 }
+
 
 
 
