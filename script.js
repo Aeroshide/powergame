@@ -242,11 +242,10 @@ function handleCheckpoint(power) {
         messages[power] += ` ${rando}`;
     }
 
-
+    spawnConfetti();
     if (messages[power]) {
         feedback.textContent += `\n${messages[power]}`;
         feedback.style.color = "purple";
-        spawnConfetti();
     }
 }
 
